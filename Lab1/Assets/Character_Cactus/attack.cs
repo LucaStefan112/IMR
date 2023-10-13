@@ -2,54 +2,47 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterProximity : MonoBehaviour
+public class Attack : MonoBehaviour
 {
-    public float proximityDistance = 3f; // Adjust this value to change the proximity distance.
-
-    private GameObject player1;
-    private GameObject player2;
-    private Animator animator1;
-    private Animator animator2;
+    public Animator animator1;
+    public Animator animator2;
+    
+    public GameObject player1;
+    public GameObject player2;
 
     void Start()
     {
-        // Find and store the player GameObjects and their Animators using tags.
-        player1 = GameObject.FindGameObjectWithTag("Player1");
-        player2 = GameObject.FindGameObjectWithTag("Player2");
+    }
 
-        if (player1 != null)
-            animator1 = player1.GetComponent<Animator>();
-
-        if (player2 != null)
-            animator2 = player2.GetComponent<Animator>();
+    // Pass the player and animator objects as parameters
+    public void SetPlayersAndAnimators(GameObject player1, GameObject player2, Animator anim1, Animator anim2)
+    {
+        this.player1 = player1;
+        this.player2 = player2;
+        this.animator1 = anim1;
+        this.animator2 = anim2;
     }
 
     void Update()
     {
-        if (player1 == null || player2 == null)
-            return;
-
-        // Calculate the distance between the two players.
-        float distance = Vector3.Distance(player1.transform.position, player2.transform.position);
-
-        // Check if the players are close within the specified proximity distance.
-        if (distance < proximityDistance)
+        if (player1 == null || player2 == null || animator1 == null || animator2 == null)
         {
-            // Set 'isAttacking' to true for both players' Animators.
-            if (animator1 != null)
-                animator1.SetBool("isAttacking", true);
+            Debug.LogError("Player or Animator objects not set.");
+            return;
+        }
 
-            if (animator2 != null)
-                animator2.SetBool("isAttacking", true);
+        var position1 = player1.transform.position;
+        var position2 = player2.transform.position;
+
+        if (Vector3.Distance(position1, position2) < 0.1f)
+        {
+            animator1.SetBool("isAttacking", true);
+            animator2.SetBool("isAttacking", true);
         }
         else
         {
-            // Set 'isAttacking' to false for both players' Animators.
-            if (animator1 != null)
-                animator1.SetBool("isAttacking", false);
-
-            if (animator2 != null)
-                animator2.SetBool("isAttacking", false);
+            animator1.SetBool("isAttacking", false);
+            animator2.SetBool("isAttacking", false);
         }
     }
 }
